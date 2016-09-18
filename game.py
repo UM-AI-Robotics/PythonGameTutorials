@@ -6,6 +6,8 @@ import pygame.locals as pgl
 pg.init()
 width, height = 640, 480
 screen = pg.display.set_mode((width, height))
+keys = [False, False, False, False]
+playerpos = [100, 100]
 
 # 3 - Load images
 player = pg.image.load("resources/images/dude.png")
@@ -29,7 +31,7 @@ while True:
     screen.blit(castle, (0, 135))
     screen.blit(castle, (0, 240))
     screen.blit(castle, (0, 345))
-    screen.blit(player, (100, 100))
+    screen.blit(player, playerpos)
 
     # 7 - Update screen
     pg.display.flip()
@@ -38,3 +40,32 @@ while True:
         if event.type == pg.QUIT:
             pg.quit()
             exit(0)
+
+        if event.type == pg.KEYDOWN:
+            if event.key == pgl.K_w:
+                keys[0] = True
+            elif event.key == pgl.K_a:
+                keys[1] = True
+            elif event.key == pgl.K_s:
+                keys[2] = True
+            elif event.key == pgl.K_d:
+                keys[3] = True
+
+        if event.type == pg.KEYUP:
+            if event.key == pgl.K_w:
+                keys[0] = False
+            elif event.key == pgl.K_a:
+                keys[1] = False
+            elif event.key == pgl.K_s:
+                keys[2] = False
+            elif event.key == pgl.K_d:
+                keys[3] = False
+
+    if keys[0]:
+        playerpos[1] -= 5
+    elif keys[2]:
+        playerpos[1] += 5
+    elif keys[1]:
+        playerpos[0] -= 5
+    elif keys[3]:
+        playerpos[0] += 5
