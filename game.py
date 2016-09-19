@@ -1,5 +1,6 @@
 #1 - Import library
 import math
+import random
 import pygame as pg
 import pygame.locals as pgl
 
@@ -11,15 +12,20 @@ keys = [False, False, False, False]
 playerpos = [100, 100]
 acc = [0, 0]
 arrows = []
-
+badtimer = 100
+badtimer1 = 0
+badguys = [[640, 100]]
+healthvalue = 194
 # 3 - Load images
 player = pg.image.load("resources/images/dude.png")
 grass = pg.image.load("resources/images/grass.png")
 castle = pg.image.load("resources/images/castle.png")
 arrow = pg.image.load("resources/images/bullet.png")
-
+badguyimg1 = pg.image.load("resources/images/badguy.png")
+badguyimg = badguyimg1
 # 4 - Main loop
 while True:
+    badtimer -= 1
     # 5 - Clear old screen (fill with black)
     screen.fill(0)
     # 6 - Draw new screen elements
@@ -59,6 +65,28 @@ while True:
             angle = 360 - projectile[0] * 57.29
             arrow1 = pg.transform.rotate(arrow, angle)
             screen.blit(arrow1, (projectile[1], projectile[2]))
+    # 6.3 - Draw badgers
+    if badtimer == 0:
+        badguys.append([640, random.randint(50, 430)])
+        badtimer = 100 - (badtimer1 * 2)
+        if badtimer1 >= 35:
+            badtimer1 = 35
+        else:
+            badtimer += 5
+    index = 0
+    for badguy in badguys:
+        if badguy[0] < -64:
+            badguys.pop(index)
+        badguy[0] -= 7
+        badrect = pg.Rect(badguyimg.get_rect())
+        badrect.top = badguy[1]
+        badrect.left = badguy[0]
+        if badrect.left < 64:
+            healthvalue -= random.randint(5, 20)
+            badguys.pop(index)
+        index += 1
+    for badguy in badguys:
+        screen.blit(badguyimg, badguy)
 
     # 7 - Update screen
     pg.display.flip()
