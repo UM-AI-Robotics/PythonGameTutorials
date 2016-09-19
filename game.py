@@ -78,13 +78,27 @@ while True:
         if badguy[0] < -64:
             badguys.pop(index)
         badguy[0] -= 7
+        # 6.3.1 - Attack castle
         badrect = pg.Rect(badguyimg.get_rect())
         badrect.top = badguy[1]
         badrect.left = badguy[0]
         if badrect.left < 64:
             healthvalue -= random.randint(5, 20)
             badguys.pop(index)
+        # 6.3.2 - Check for collisions
+        index1 = 0
+        for bullet in arrows:
+            bullrect = pg.Rect(arrow.get_rect())
+            bullrect.left = bullet[1]
+            bullrect.top = bullet[2]
+            if badrect.colliderect(bullrect):
+                acc[0] += 1
+                badguys.pop(index)
+                arrows.pop(index1)
+            index1 += 1
+        # 6.3.3 - Next bad guy
         index += 1
+
     for badguy in badguys:
         screen.blit(badguyimg, badguy)
 
