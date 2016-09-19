@@ -9,11 +9,14 @@ width, height = 640, 480
 screen = pg.display.set_mode((width, height))
 keys = [False, False, False, False]
 playerpos = [100, 100]
+acc = [0, 0]
+arrows = []
 
 # 3 - Load images
 player = pg.image.load("resources/images/dude.png")
 grass = pg.image.load("resources/images/grass.png")
 castle = pg.image.load("resources/images/castle.png")
+arrow = pg.image.load("resources/images/bullet.png")
 
 # 4 - Main loop
 while True:
@@ -36,12 +39,26 @@ while True:
     position = pg.mouse.get_pos()
     delta_y = position[1] - playerpos[1] - 32
     delta_x = position[0] - playerpos[0] - 26
-    angle_rads = math.atan2(delta_y, delta_x)
-    angle_degs = 360 - 57.29 * angle_rads
-    playerrot = pg.transform.rotate(player, angle_degs)
+    angle = 360 - 57.29 * math.atan2(delta_y, delta_x)
+    playerrot = pg.transform.rotate(player, angle)
     playerpos1 = (playerpos[0] - playerrot.get_rect().width/2, 
                     playerpos[1] - playerrot.get_rect().height/2)
     screen.blit(playerrot, playerpos1)
+    # 6.2 - Draw arrows
+    for bullet in arrows:
+        index = 0
+        velx = math.cos(bullet[0]) * 10
+        vely = math.sin(bullet[0]) * 10
+        bullet[1] += velx
+        bullet[2] += vely
+        if bullet[1] < -64 or bullet[1] > 640 or \
+        bullet[2] < -64 or bullet[2] > 480:
+            arrows.pop(index)
+        index += 1
+        for projectile in arrows:
+            angle = 360 - projectile[0] * 57.29
+            arrow1 = pg.transform.rotate(arrow, angle)
+            screen.blit(arrow1, (projectile[1], projectile[2]))
 
     # 7 - Update screen
     pg.display.flip()
@@ -71,6 +88,16 @@ while True:
             elif event.key == pgl.K_d:
                 keys[3] = False
 
+        if event.type == pg.MOUSEBUTTONDOWN:
+            position = pg.mouse.get_pos()
+            acc[1] += 1
+            delta_y = position[1] - playerpos1[1] - 32
+            delta_x = position[0] - playerpos1[0] - 26
+            angle = math.atan2(delta_y, delta_x)
+            arrows.append([angle,
+                            playerpos1[0] + 32, 
+                            playerpos1[1] + 32])
+            
     if keys[0]:
         playerpos[1] -= 5
     elif keys[2]:
