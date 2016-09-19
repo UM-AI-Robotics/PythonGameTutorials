@@ -1,4 +1,5 @@
-# 1 - Import library
+#1 - Import library
+import math
 import pygame as pg
 import pygame.locals as pgl
 
@@ -31,7 +32,16 @@ while True:
     screen.blit(castle, (0, 135))
     screen.blit(castle, (0, 240))
     screen.blit(castle, (0, 345))
-    screen.blit(player, playerpos)
+    # 6.1 - Set player position and rotation
+    position = pg.mouse.get_pos()
+    delta_y = position[1] - playerpos[1] - 32
+    delta_x = position[0] - playerpos[0] - 26
+    angle_rads = math.atan2(delta_y, delta_x)
+    angle_degs = 360 - 57.29 * angle_rads
+    playerrot = pg.transform.rotate(player, angle_degs)
+    playerpos1 = (playerpos[0] - playerrot.get_rect().width/2, 
+                    playerpos[1] - playerrot.get_rect().height/2)
+    screen.blit(playerrot, playerpos1)
 
     # 7 - Update screen
     pg.display.flip()
