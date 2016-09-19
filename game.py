@@ -1,4 +1,4 @@
-#1 - Import library
+#1 - Import libraries
 import math
 import random
 import pygame as pg
@@ -16,6 +16,7 @@ badtimer = 100
 badtimer1 = 0
 badguys = [[640, 100]]
 healthvalue = 194
+
 # 3 - Load images
 player = pg.image.load("resources/images/dude.png")
 grass = pg.image.load("resources/images/grass.png")
@@ -23,11 +24,16 @@ castle = pg.image.load("resources/images/castle.png")
 arrow = pg.image.load("resources/images/bullet.png")
 badguyimg1 = pg.image.load("resources/images/badguy.png")
 badguyimg = badguyimg1
+healthbar = pg.image.load("resources/images/healthbar.png")
+health = pg.image.load("resources/images/health.png")
+
 # 4 - Main loop
 while True:
     badtimer -= 1
+
     # 5 - Clear old screen (fill with black)
     screen.fill(0)
+
     # 6 - Draw new screen elements
     # 6.0 - Scenery
     # 6.01 - Tile grass (nx by ny)
@@ -98,9 +104,21 @@ while True:
             index1 += 1
         # 6.3.3 - Next bad guy
         index += 1
-
     for badguy in badguys:
         screen.blit(badguyimg, badguy)
+    # 6.4 - Draw clock
+    mins = (90000 - pg.time.get_ticks()) / 60000
+    secs  = (90000 - pg.time.get_ticks()) / 1000 % 60
+    clock_str = str(mins) + ':' + str(secs).zfill(2)
+    font = pg.font.Font(None, 24)
+    survivedtext = font.render(clock_str, True, (0, 0, 0))
+    textRect = survivedtext.get_rect()
+    textRect.topright = [635, 5]
+    screen.blit(survivedtext, textRect)
+    # 6.5 - Draw health bar
+    screen.blit(healthbar, (5, 5))
+    for health1 in range(healthvalue):
+        screen.blit(health, (health1 + 8, 8))
 
     # 7 - Update screen
     pg.display.flip()
