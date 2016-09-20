@@ -26,9 +26,13 @@ badguyimg1 = pg.image.load("resources/images/badguy.png")
 badguyimg = badguyimg1
 healthbar = pg.image.load("resources/images/healthbar.png")
 health = pg.image.load("resources/images/health.png")
+gameover = pg.image.load("resources/images/gameover.png")
+youwin = pg.image.load("resources/images/youwin.png")
 
 # 4 - Main loop
-while True:
+running = 1
+exitcode = 0
+while running:
     badtimer -= 1
 
     # 5 - Clear old screen (fill with black)
@@ -122,6 +126,7 @@ while True:
 
     # 7 - Update screen
     pg.display.flip()
+
     # 8 - Event loop
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -158,6 +163,7 @@ while True:
                             playerpos1[0] + 32, 
                             playerpos1[1] + 32])
             
+    # 9 - Move player
     if keys[0]:
         playerpos[1] -= 5
     elif keys[2]:
@@ -166,3 +172,43 @@ while True:
         playerpos[0] -= 5
     elif keys[3]:
         playerpos[0] += 5
+
+    #10 - Win/Lose check
+    if pg.time.get_ticks() >= 90000:
+        running = 0
+        exitcode = 1
+    if healthvalue <= 0:
+        running = 0
+        exitcode = 0
+    if acc[1] != 0:
+        accuracy = acc[0] * 1.0/acc[1] * 100
+    else:
+        accuracy = 0
+
+#11 = Win/lose display
+if exitcode == 0:
+    pg.font.init()
+    font = pg.font.Font(None, 24)
+    acc_str = "Accuracy: " + str(accuracy) + "%"
+    text = font.render(acc_str, True, (255, 0, 0))
+    textRect = text.get_rect()
+    textRect.centerx = screen.get_rect().centerx
+    textRect.centery = screen.get_rect().centery + 24
+    screen.blit(gameover, (0,0))
+    screen.blit(text, textRect)
+else:
+    pg.font.init()
+    font = pg.font.Font(None, 24)
+    acc_str = "Accuracy: " + str(accuracy) + "%"
+    text = font.render(acc_str, True, (255, 0, 0))
+    textRect = text.get_rect()
+    textRect.centerx = screen.get_rect().centerx
+    textRect.centery = screen.get_rect().centery + 24
+    screen.blit(youwin, (0,0))
+    screen.blit(text, textRect)
+while True:
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            pg.quit()
+            exit(0)
+    pg.display.flip()
