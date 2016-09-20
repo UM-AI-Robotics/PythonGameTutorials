@@ -16,6 +16,7 @@ badtimer = 100
 badtimer1 = 0
 badguys = [[640, 100]]
 healthvalue = 194
+pg.mixer.init()
 
 # 3 - Load images
 player = pg.image.load("resources/images/dude.png")
@@ -28,6 +29,16 @@ healthbar = pg.image.load("resources/images/healthbar.png")
 health = pg.image.load("resources/images/health.png")
 gameover = pg.image.load("resources/images/gameover.png")
 youwin = pg.image.load("resources/images/youwin.png")
+# 3.1 - Load audio
+hit = pg.mixer.Sound("resources/audio/explode.wav")
+enemy = pg.mixer.Sound("resources/audio/enemy.wav")
+shoot = pg.mixer.Sound("resources/audio/shoot.wav")
+hit.set_volume(0.05)
+enemy.set_volume(0.05)
+shoot.set_volume(0.05)
+pg.mixer.music.load("resources/audio/moonlight.wav")
+pg.mixer.music.play(-1, 0.0)
+pg.mixer.music.set_volume(0.25)
 
 # 4 - Main loop
 running = 1
@@ -93,6 +104,7 @@ while running:
         badrect.top = badguy[1]
         badrect.left = badguy[0]
         if badrect.left < 64:
+            hit.play()
             healthvalue -= random.randint(5, 20)
             badguys.pop(index)
         # 6.3.2 - Check for collisions
@@ -102,6 +114,7 @@ while running:
             bullrect.left = bullet[1]
             bullrect.top = bullet[2]
             if badrect.colliderect(bullrect):
+                enemy.play()
                 acc[0] += 1
                 badguys.pop(index)
                 arrows.pop(index1)
@@ -154,6 +167,7 @@ while running:
                 keys[3] = False
 
         if event.type == pg.MOUSEBUTTONDOWN:
+            shoot.play()
             position = pg.mouse.get_pos()
             acc[1] += 1
             delta_y = position[1] - playerpos1[1] - 32
